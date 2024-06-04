@@ -4023,6 +4023,9 @@ MonoBehaviour:
         Shooting
         " Mouse " Key '
       Icon: {fileID: 0}
+    WinMessage:
+      Description: Win Game
+      Icon: {fileID: 0}
 --- !u!1 &2025440181
 GameObject:
   m_ObjectHideFlags: 0

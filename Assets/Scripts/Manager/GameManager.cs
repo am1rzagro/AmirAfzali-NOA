@@ -11,8 +11,10 @@ public class GameManager : MonoBehaviour
 
     public GameState State { get { return gameState; } private set { gameState = value; }}
 
-    public delegate void OnEndGame();
-    public event OnEndGame onEndGame;
+    public delegate void OnGameEvent();
+    public event OnGameEvent onEndGame;
+    public event OnGameEvent onStartGame;
+
 
     private void Awake()
     {
@@ -20,7 +22,7 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        UIPopupManager.Instance.messages.ShowToturialMessage();
+        UIPopupManager.Instance.messages.ShowToturialMessage(StartGame);
     }
 
     void Update()
@@ -34,5 +36,25 @@ public class GameManager : MonoBehaviour
 
         if (onEndGame != null)
             onEndGame();
+    }
+
+    public void StartGame()
+    {
+        State = GameState.Run;
+
+        if (onStartGame != null)
+            onStartGame();
+
+        PlayerController.Instance.gameObject.SetActive(true);
+    }
+
+    public void SetWinGame()
+    {
+        UIPopupManager.Instance.messages.ShowWinMessage(StartGame);
+        State = GameState.WinGame;
+
+        if (onEndGame != null)
+            onEndGame();
+
     }
 }

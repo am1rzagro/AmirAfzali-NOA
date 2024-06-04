@@ -11,7 +11,7 @@ public class WaveDataLoader : MonoBehaviour
     public delegate void OnGetComplateData(List<List<EnemyData>> data);
     public OnGetComplateData OnComplateData;
 
-    void Start()
+    public void GetData()
     {
         StartCoroutine(LoadData());
     }

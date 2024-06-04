@@ -29,6 +29,7 @@ public class LevelController : MonoBehaviour
 
         public void Init()
         {
+            dataLoader.GetData();
             dataLoader.OnComplateData += OnComplateData;
         }
         public void InternalUpdate()
@@ -37,6 +38,9 @@ public class LevelController : MonoBehaviour
                 return;
 
             WaveIndex = GetWaveIndex();
+            if (WinGame())
+                return;
+
             waves[WaveIndex].InternalUpdate();
         }
         public void Clear()
@@ -55,7 +59,15 @@ public class LevelController : MonoBehaviour
 
             waves[WaveIndex].SetDeactiveItem(value);
         }
-
+        private bool WinGame()
+        {
+            if(WaveIndex >= waves.Count)
+            {
+                GameManager.Instance.SetWinGame();
+                return true;
+            }
+            return false;
+        }
         private int GetWaveIndex()
         {
             int result = 0;
@@ -258,20 +270,17 @@ public class LevelController : MonoBehaviour
 
     private List<levelItem> levelItems = new List<levelItem>();
 
-    private bool Deactive;
+    private bool Deactive = true;
 
     private void Awake()
     {
         Instance = this;
     }
-    void Start()
-    {
-        levelItems.Add(ammo);
-        levelItems.Add(wave);
-        foreach (levelItem item in levelItems)
-            item.Init();
 
+    private void Start()
+    {
         GameManager.Instance.onEndGame += OnEndGame;
+        GameManager.Instance.onStartGame += OnStartGame;
     }
 
     void Update()
@@ -294,4 +303,18 @@ public class LevelController : MonoBehaviour
         foreach (levelItem item in levelItems)
             item.Clear();
     }
+
+    public void OnStartGame()
+    {
+        Clear();
+
+        Deactive = false;
+        levelItems = new List<levelItem>();
+        levelItems.Add(ammo);
+        levelItems.Add(wave);
+        foreach (levelItem item in levelItems)
+            item.Init();
+
+    }
+
 }
