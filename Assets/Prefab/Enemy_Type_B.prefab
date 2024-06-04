@@ -52,6 +52,7 @@ MonoBehaviour:
   meshRenderer: {fileID: 7854536307221488110}
   Color: {r: 1, g: 0.8933852, b: 0, a: 1}
   Speed: 5
+  DamagePower: 10
 --- !u!114 &8446666808256814194
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,9 +5,11 @@ using UnityEngine.Animations.Rigging;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance;
 
     [SerializeField] private float Speed = 4;
     [SerializeField] private float MaxMovmentDirection = 9;
+    [SerializeField] private float aimHightValue = 2;
     private float animationMovmentValue;
 
     [SerializeField] private Transform AimPos;
@@ -18,8 +20,14 @@ public class PlayerController : MonoBehaviour
 
     private Animator animator;
 
+    private bool deavtive;
 
     private string animationMovmentName = "Movment";
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -34,6 +42,8 @@ public class PlayerController : MonoBehaviour
         weaponController.transform.localPosition = Vector3.zero;
         weaponController.transform.localEulerAngles = Vector3.zero;
         weaponController.Init(AimPos);
+
+        GameManager.Instance.onEndGame += OnEndGame;
     }
 
     void Update()
@@ -56,7 +66,7 @@ public class PlayerController : MonoBehaviour
     {
         float ZPos = input.y;
         ZPos = Mathf.Clamp(ZPos,-23,1000);
-        AimPos.position = new Vector3(input.x,2f, ZPos);
+        AimPos.position = new Vector3(input.x, aimHightValue, ZPos);
     }
     private void OnFire() => weaponController.Shoot();
     private void OnChangeGun() => weaponController.ChangeGun();
@@ -70,5 +80,11 @@ public class PlayerController : MonoBehaviour
 
         animationMovmentValue = Mathf.MoveTowards(animationMovmentValue, XValue, Time.deltaTime * Speed);
         animator.SetFloat(animationMovmentName, animationMovmentValue);
+    }
+
+    private void OnEndGame()
+    {
+        deavtive = true;
+        gameObject.SetActive(false);
     }
 }

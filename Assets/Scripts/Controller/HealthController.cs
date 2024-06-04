@@ -10,12 +10,20 @@ public class HealthController : MonoBehaviour
     [SerializeField] private int Health;
     private int StartHealt;
 
-    public void ResetDamage() => Health = StartHealt;
-    public void GetDamage(int Power)
+    private void Start()
     {
-        Debug.Log("GetDamage "+ Power);
+        SetHBMaxValue();
+        ShowHB();
+    }
+
+    public void ResetDamage() => Health = StartHealt;
+    public void SetDamage(int Power)
+    {
+        if (Health == 0) return;
+
         StartHealt = StartHealt == 0 ? Health : StartHealt;
         Health = Health - Power;
+        ShowHB();
         if (Health <= 0)
         {
             Health = 0;
@@ -32,6 +40,29 @@ public class HealthController : MonoBehaviour
                 break;
             case Type.Enemy:
                 LevelController.Instance.wave.DeactiveEnemyFromWave(gameObject);
+                break;
+            case Type.player:
+                GameManager.Instance.SetLoseGame();
+                break;
+        }
+    }
+
+    private void ShowHB()
+    {
+        switch (type)
+        {
+            case Type.player:
+                HUDManager.Instance.statistics.SetSliderHB(Health);
+                break;
+        }
+    }
+
+    private void SetHBMaxValue()
+    {
+        switch (type)
+        {
+            case Type.player:
+                HUDManager.Instance.statistics.SetSliderHBMaxValue(Health);
                 break;
         }
     }

@@ -14,6 +14,8 @@ public class EnemyController : MonoBehaviour
 
     [SerializeField] private float Speed = 5;
 
+    [SerializeField] private int DamagePower;
+
     private HealthController healthController;
 
     private void Start()
@@ -32,7 +34,10 @@ public class EnemyController : MonoBehaviour
         transform.Translate(Vector3.back * Time.deltaTime * Speed);
 
         if (transform.position.z <= -30)
+        {
             healthController.Dai();
+            PlayerController.Instance.GetComponent<HealthController>().SetDamage(DamagePower);
+        }
     }
     private void SetColor(Color color)
     {

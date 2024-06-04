@@ -10,6 +10,7 @@ public class LevelController : MonoBehaviour
     {
         public void Init();
         public void InternalUpdate();
+        public void Clear();
     }
 
     [System.Serializable]
@@ -38,8 +39,22 @@ public class LevelController : MonoBehaviour
             WaveIndex = GetWaveIndex();
             waves[WaveIndex].InternalUpdate();
         }
+        public void Clear()
+        {
+            foreach (ObjectPooling pooling in waves)
+                pooling.Clear();
 
-        public void DeactiveEnemyFromWave(GameObject value) => waves[WaveIndex].SetDeactiveItem(value);
+            waves = new List<ObjectPooling>();
+            allEnemies = new List<List<EnemyData>>();
+        }
+
+        public void DeactiveEnemyFromWave(GameObject value)
+        {
+            if (waves.Count < WaveIndex)
+                return;
+
+            waves[WaveIndex].SetDeactiveItem(value);
+        }
 
         private int GetWaveIndex()
         {
@@ -110,6 +125,7 @@ public class LevelController : MonoBehaviour
 
         private List<activeItem> ActiveList = new List<activeItem>();
         private List<GameObject> DeactiveList = new List<GameObject>();
+        private List<GameObject> AllItemsList = new List<GameObject>();
 
         public Transform[] SpawnPointList { set { spawnPointList = value; } }
         public GameObject Prefab { set { prefab = value; } }
@@ -154,6 +170,17 @@ public class LevelController : MonoBehaviour
             }
         }
 
+        public void Clear()
+        {
+            foreach (GameObject obj in AllItemsList)
+                if(obj != null)
+                    Destroy(obj.gameObject);
+
+            AllItemsList = new List<GameObject>();
+            DeactiveList = new List<GameObject>();
+            ActiveList = new List<activeItem>();
+        }
+
         public void SetDeactiveItem(GameObject gameObject)
         {
             gameObject.SetActive(false);
@@ -185,6 +212,7 @@ public class LevelController : MonoBehaviour
             item.Object = inst;
             item.SpawnPoint = instPos;
             ActiveList.Add(item);
+            AllItemsList.Add(inst);
         }
         private Transform GetPos()
         {
@@ -230,6 +258,8 @@ public class LevelController : MonoBehaviour
 
     private List<levelItem> levelItems = new List<levelItem>();
 
+    private bool Deactive;
+
     private void Awake()
     {
         Instance = this;
@@ -240,11 +270,28 @@ public class LevelController : MonoBehaviour
         levelItems.Add(wave);
         foreach (levelItem item in levelItems)
             item.Init();
+
+        GameManager.Instance.onEndGame += OnEndGame;
     }
 
     void Update()
     {
+        if (Deactive)
+            return;
+
         for (int i = 0; i < levelItems.Count; i++)
             levelItems[i].InternalUpdate();
+    }
+
+    private void OnEndGame()
+    {
+        Deactive = true;
+        Clear();
+    }
+
+    private void Clear()
+    {
+        foreach (levelItem item in levelItems)
+            item.Clear();
     }
 }

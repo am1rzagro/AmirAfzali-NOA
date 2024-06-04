@@ -18,6 +18,7 @@ public class WeaponController : MonoBehaviour
         [SerializeField] private int MaxBullet;
         [SerializeField] private int AllBullets;
 
+        private const float hightOffset = 1.5f;
 
         private Transform spawnPoint;
         private Transform aimPoint;
@@ -43,13 +44,17 @@ public class WeaponController : MonoBehaviour
             if (CanShoot() == false)
                 return;
 
+            spawnPoint.transform.LookAt( new Vector3 (aimPoint.position.x, hightOffset, aimPoint.position.z));
+            VFXManager.Instance.GunTail.Play(spawnPoint.position, spawnPoint.rotation);
+            
+
             Timer = 0;
             AllBullets -= 1;
 
-            Vector3 direction = aimPoint.position - spawnPoint.position;
+            Vector3 direction = spawnPoint.forward;//new Vector3(aimPoint.position.x, hightOffset, aimPoint.position.z)  - spawnPoint.position;
             RaycastHit hit;
 
-            if (Physics.Raycast(spawnPoint.position, direction, out hit, direction.magnitude))
+            if (Physics.Raycast(spawnPoint.position, direction, out hit))
             {
                 Debug.DrawRay(spawnPoint.position, direction, Color.green);
 
@@ -59,7 +64,7 @@ public class WeaponController : MonoBehaviour
 
                 HealthController healthController = hit.collider.gameObject.GetComponent<HealthController>();
                 if (healthController)
-                    healthController.GetDamage(damage);
+                    healthController.SetDamage(damage);
             }
             else
             {

@@ -14,11 +14,14 @@ public class HUDManager : MonoBehaviour
         [SerializeField] private Text TxtWave;
         [SerializeField] private Text TxtWeaponType;
 
-        [SerializeField] private Slider slider;
+        [SerializeField] private Slider slider_HB;
 
         public void SetTxtBullet(string value) => TxtBullet.text = $"Bullet : {value}";
         public void SetTxtWave(string value, string value2) => TxtWave.text = $"Wave : {value} / {value2}";
         public void SetTxtWeaponType(string value) => TxtWeaponType.text = $"Type : {value}";
+        public void SetSliderHB(int value) => slider_HB.value = value;
+        public void SetSliderHBMaxValue(int value) => slider_HB.maxValue = value;
+
     }
     public Statistics statistics;
 
